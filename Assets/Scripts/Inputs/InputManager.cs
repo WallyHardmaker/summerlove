@@ -6,7 +6,7 @@ using UnityEngine.InputSystem;
 
 namespace NoName
 {
-    public class InputManager : MonoBehaviour, PlayerControls.IPlayerActions
+    public class InputManager : MonoBehaviour, PlayerControls.IPlayerActions, PlayerControls.IUIActions
     {
         public static InputManager Instance;
 
@@ -14,6 +14,9 @@ namespace NoName
 
         public Vector2 MoveInput { get; private set; }
 
+        public event Action InteractEvent;
+
+        public event Action ConfirmEvent;
         public event Action CancelEvent;
 
         private void Awake()
@@ -32,10 +35,23 @@ namespace NoName
         {
             _playerControls = new();
             _playerControls.Player.SetCallbacks(this);
+            _playerControls.UI.SetCallbacks(this);
             _playerControls.Player.Enable();
+            _playerControls.UI.Enable();
         }
 
         private void OnDestroy()
+        {
+            _playerControls.Player.Disable();
+            _playerControls.UI.Disable();
+        }
+
+        public void EnablePlayerControls()
+        {
+            _playerControls.Player.Enable();
+        }
+
+        public void DisablePlayerControls()
         {
             _playerControls.Player.Disable();
         }
@@ -51,6 +67,19 @@ namespace NoName
             
         }
 
+        public void OnInteract(InputAction.CallbackContext context)
+        {
+            if (!context.performed) return;
+
+            InteractEvent?.Invoke();
+        }
+
+        public void OnConfirm(InputAction.CallbackContext context)
+        {
+            if (!context.performed) return;
+
+            ConfirmEvent?.Invoke();
+        }
 
         public void OnCancel(InputAction.CallbackContext context)
         {

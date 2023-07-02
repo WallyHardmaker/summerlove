@@ -12,6 +12,7 @@ namespace NoName
         [SerializeField] private float _sprintSpeed;
         [SerializeField] private float _rotationSmoothTime = .3f;
         [SerializeField] private float _animationDampTime = .1f;
+        [SerializeField] private float _interactionRange;
 
         [Header("Utilities")]
         [SerializeField] private Transform _cameraTarget;
@@ -27,6 +28,7 @@ namespace NoName
         public float WalkingSpeed { get { return _walkingSpeed; } }
         public float SprintSpeed { get { return _sprintSpeed; } }
         public float RotationSmoothTime { get { return _rotationSmoothTime; } }
+        public float InteractionRange { get { return _interactionRange; } }
         public Transform CameraTarget { get { return _cameraTarget; } }
 
 
@@ -74,5 +76,13 @@ namespace NoName
                 AnimatorManager.Animator.SetFloat(AnimationNames.VERTICAL, vertical, _animationDampTime, Time.deltaTime);
             }
         }
+
+#if UNITY_EDITOR
+        private void OnDrawGizmosSelected()
+        {
+            Gizmos.color = Color.cyan;
+            Gizmos.DrawWireSphere(transform.position, _interactionRange);
+        }
+#endif
     }
 }
